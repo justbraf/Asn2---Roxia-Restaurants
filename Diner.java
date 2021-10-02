@@ -2,19 +2,20 @@
  * Diner
  */
 public class Diner {
-
+    // Data members
     private String name;
     private char speciesCode;
     private String species;
     private int energyLevel;
 
+    // Constructor
     Diner() {
         name = "??";
         species = "D";
         speciesCode = 'D';
-        // energyLevel = 0; // should I randomize this?
     }
 
+    // Mutators and Accessors
     public void setName(String theName) {
         name = theName;
     }

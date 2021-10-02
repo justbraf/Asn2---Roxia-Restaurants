@@ -1,4 +1,8 @@
+/**
+ * Scoraxian
+ */
 public class Scoraxian extends Diner {
+    // Constructor
     Scoraxian(String name) {
         setName(name);
         setSpecies("scoraxian");

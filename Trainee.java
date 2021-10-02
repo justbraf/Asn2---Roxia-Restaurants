@@ -1,9 +1,14 @@
+/**
+ * Trainee
+ */
 public class Trainee {
+    // Data Members
     private String traineeName;
     private int servicePoints;
     private int numDeaths;
     private int numFed;
 
+    // Constructor
     Trainee(String name) {
         traineeName = name;
         servicePoints = 0;
@@ -11,6 +16,7 @@ public class Trainee {
         numFed = 0;
     }
 
+    // Mutators and Accessors
     public void setTraineeName(String name) {
         traineeName = name;
     }
