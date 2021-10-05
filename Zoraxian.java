@@ -7,6 +7,6 @@ public class Zoraxian extends Diner {
         setName(name);
         setSpecies("zoraxian");
         setSpeciesCode('z');
-        setEnergyLevel(0);
+        setEnergyLevel(0);  // random value 4 to 7 inclusive rnd.nextInt(4) + 4)
     }
 }
