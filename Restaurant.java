@@ -13,18 +13,55 @@ public class Restaurant {
     Diner[][] tablesZoneB; // Used for seating in Zone B.
     
     // Constructor
-    Restaurant() {}
+    Restaurant() {
+        numAmbroxians = 0;
+        numScoraxians = 0;
+        numZoraxians = 0;
+        zoraxTableZoneA = new Zoraxian[15];
+        scoraTableZoneA = new Scoraxian[15];
+        tablesZoneB = new Diner[5][6];
+
+    }
 
     /* Randomly populate seats at tables in Zone A. 
     Each seat has one of three possible states: contain a Zoraxian, a Scoraxian or be empty.*/
     public void setUpZoneA() {
         Random placement = new Random();
-        // Generate one seat position for the fifteen seats at the table
-        int seatPos = placement.nextInt(15) + 1;
+        int seatsPlaced = 0;
+        int seatPos = 0;
+        boolean dinerType;
+        Diner theDiner = new Diner();
+        do {
+            // Generate a seat position for one of the fifteen seats at either table
+            seatPos = placement.nextInt(15);
+            dinerType = placement.nextBoolean();
+            if (dinerType) {
+                theDiner = new Zoraxian("Alf");
+            }
+            else {
+                theDiner = new Scoraxian("ET");
+            }
+            if (fillSeat(seatPos, theDiner)) {
+                seatsPlaced += 1;
+            }
+        } while (seatsPlaced < 8);
     }
 
     // Assign a Zoraxian or a Scoraxian to a given seat position and return true, if the diner was assigned to an empty seat.
     public boolean fillSeat(int seatPos, Diner diner) {
+        if (diner.getSpeciesCode() == 'z') {
+            System.out.println(diner.getName() + " " + diner.getEnergyLevel());
+            if (zoraxTableZoneA[seatPos] == null) {
+                System.out.println("seat empty");
+                // zoraxTableZoneA[seatPos] = diner;
+            }
+            else {
+                System.out.println("already in use!");
+            }
+        }
+        else {
+            System.out.println(diner.getName() + " " + diner.getEnergyLevel());
+        }
         return true;
     }
 

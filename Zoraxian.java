@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  * Zoraxian
  */
@@ -7,6 +9,7 @@ public class Zoraxian extends Diner {
         setName(name);
         setSpecies("zoraxian");
         setSpeciesCode('z');
-        setEnergyLevel(0);  // random value 4 to 7 inclusive rnd.nextInt(4) + 4)
+        Random generateEnergy = new Random();
+        setEnergyLevel(generateEnergy.nextInt(4) + 4);  // Generate a random energy value between 4 and 7 inclusive
     }
 }

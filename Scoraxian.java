@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  * Scoraxian
  */
@@ -7,6 +9,7 @@ public class Scoraxian extends Diner {
         setName(name);
         setSpecies("scoraxian");
         setSpeciesCode('s');
-        setEnergyLevel(0); // random value 5 to 10 inclusive rnd.nextInt(6) + 5
+        Random generateEnergy = new Random();
+        setEnergyLevel(generateEnergy.nextInt(6) + 5);  // Generate a random energy value between 5 and 10 inclusive
     }
 }
