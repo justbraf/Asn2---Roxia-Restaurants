@@ -18,6 +18,7 @@ public class RTSDemo {
         String traineeName = inputStream.next();
         Trainee newTrainee = new Trainee(traineeName);
         myDiner.setUpZoneA();
+        myDiner.displayTables();
 
 
         inputStream.close();
