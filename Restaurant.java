@@ -27,50 +27,41 @@ public class Restaurant {
     Each seat has one of three possible states: contain a Zoraxian, a Scoraxian or be empty.*/
     public void setUpZoneA() {
         Random placement = new Random();
-        int seatsPlaced = 0;
         int seatPos = 0;
         boolean dinerType;
         Diner theDiner = new Diner();
         do {
-            // Generate a seat position for one of the fifteen seats at either table
-            seatPos = placement.nextInt(15);
-            dinerType = placement.nextBoolean();
+            seatPos = placement.nextInt(15); // Generate a seat position for one of the fifteen seats at either table
+            dinerType = placement.nextBoolean(); // Randomly select a type of diner
             if (dinerType) {
-                theDiner = new Zoraxian("Alf");
+                theDiner = new Zoraxian("Zora" + seatPos);
             }
             else {
-                theDiner = new Scoraxian("ET");
+                theDiner = new Scoraxian("Scora" + seatPos);
             }
+            // Randomly generate a seat position unil the diner is seated
             while (!fillSeat(seatPos, theDiner)) {
                 seatPos = placement.nextInt(15);
             }
-            seatsPlaced += 1;
-            System.out.println("Seat Pos: " + (seatPos + 1));
-        } while (seatsPlaced < 8);
+        } while ((numScoraxians + numZoraxians) < 8); // Finish zone setup when eight diners are seated
     }
 
     // Assign a Zoraxian or a Scoraxian to a given seat position and return true, if the diner was assigned to an empty seat.
     public boolean fillSeat(int seatPos, Diner diner) {
         if (diner.getSpeciesCode() == 'z') {
-            // Assign a Zoraxian
-            System.out.println(diner.getName() + " " + diner.getEnergyLevel());
-            if (zoraxTableZoneA[seatPos] == null) {
-                zoraxTableZoneA[seatPos] = (Zoraxian)diner;
+            // Assign a Zoraxian to a seat
+            if (zoraxTableZoneA[seatPos] == null) { // seat is empty
+                zoraxTableZoneA[seatPos] = (Zoraxian)diner; // therefore fill it
+                numZoraxians += 1; // count
                 return true;
-            }
-            else {
-                System.out.println("already in use!");
             }
         }
         else {
-            // Assign a Scoraxian
-            System.out.println(diner.getName() + " " + diner.getEnergyLevel());
-            if (scoraxTableZoneA[seatPos] == null) {
-                scoraxTableZoneA[seatPos] = (Scoraxian)diner;
+            // Assign a Scoraxian to a seat
+            if (scoraxTableZoneA[seatPos] == null) { // seat is empty
+                scoraxTableZoneA[seatPos] = (Scoraxian)diner; // therefore fill it
+                numScoraxians += 1;
                 return true;
-            }
-            else {
-                System.out.println("already in use!");
             }
         }
         return false;
