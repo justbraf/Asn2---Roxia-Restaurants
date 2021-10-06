@@ -56,7 +56,7 @@ public class Restaurant {
                 return true;
             }
         }
-        else {
+        else if (diner.getSpeciesCode() == 's') {
             // Assign a Scoraxian to a seat
             if (scoraxTableZoneA[seatPos] == null) { // seat is empty
                 scoraxTableZoneA[seatPos] = (Scoraxian)diner; // therefore fill it
@@ -64,12 +64,30 @@ public class Restaurant {
                 return true;
             }
         }
+        // else if (diner.getSpeciesCode() == 'a') {
+            // Assign a Ambroxian to a seat
+        // }
         return false;
     }
 
     // Clear a given seat position and species of diner and return true, if there's a match and the diner removed.
     public boolean clearSeat(int seatPos, char species) {
-        return true;
+        if (species == 'z') {
+            if (zoraxTableZoneA[seatPos] != null) {
+                zoraxTableZoneA[seatPos] = null;
+                return true;
+            }
+        }
+        else if (species == 's') {
+            if (scoraxTableZoneA[seatPos] != null) {
+                scoraxTableZoneA[seatPos] = null;
+                return true;
+            }
+        }
+        // else if (species == 'a') {
+            // remove Ambroxian from a table
+        // }
+        return false;
     }
 
     // Prints the contents of the seating arrangements in a given format.
