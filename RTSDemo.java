@@ -53,6 +53,8 @@ public class RTSDemo {
 
     public static void main(String[] args) {
         Scanner inputStream = new Scanner(System.in);
+        System.out.print("\033[H\033[2J"); // Clear the console
+        System.out.flush(); // Empty the buffer
         System.out.println("Welcome to the Roxia Management System.");
         Restaurant myDiner = new Restaurant();
         String traineeName = inputStream.next();
@@ -63,8 +65,6 @@ public class RTSDemo {
         userStats(newTrainee);
         int zoraEC;
         for (int rounds = 1; rounds < 8; rounds++) {
-            // System.out.print("\033[H\033[2J"); // Clear the console
-            // System.out.flush(); // Empty the buffer
             System.out.println("************** ROUND " + rounds + " ***************");
             myDiner.displayTables();
             // printMenu();
@@ -156,6 +156,8 @@ public class RTSDemo {
             } catch (InterruptedException e) {
                 System.out.println("Thread is interrupted");
             }
+            System.out.print("\033[H\033[2J"); // Clear the console
+            System.out.flush(); // Empty the buffer
             
         }
         System.out.println("\n\n########## Summary ##########");
