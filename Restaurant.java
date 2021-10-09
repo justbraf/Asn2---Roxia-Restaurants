@@ -34,10 +34,10 @@ public class Restaurant {
             seatPos = placement.nextInt(15); // Generate a seat position for one of the fifteen seats at either table
             dinerType = placement.nextBoolean(); // Randomly select a type of diner
             if (dinerType) {
-                theDiner = new Zoraxian("Zora" + seatPos);
+                theDiner = new Zoraxian("Zora " + (seatPos + 1));
             }
             else {
-                theDiner = new Scoraxian("Scora" + seatPos);
+                theDiner = new Scoraxian("Scora " + (seatPos + 1));
             }
             // Randomly generate a seat position unil the diner is seated
             while (!fillSeat(seatPos, theDiner)) {
@@ -75,17 +75,20 @@ public class Restaurant {
         if (species == 'z') {
             if (zoraxTableZoneA[seatPos] != null) {
                 zoraxTableZoneA[seatPos] = null;
+                setNumZoraxians(getNumZoraxians() - 1);
                 return true;
             }
         }
         else if (species == 's') {
             if (scoraxTableZoneA[seatPos] != null) {
                 scoraxTableZoneA[seatPos] = null;
+                setNumScoraxians(getNumScoraxians() - 1);
                 return true;
             }
         }
         // else if (species == 'a') {
             // remove Ambroxian from a table
+            // setNumAmbroxians(getNumAmbroxians()  - 1);
         // }
         return false;
     }
@@ -138,6 +141,46 @@ public class Restaurant {
                 if (i < (zoraxTableZoneA.length - 1))
                     System.out.print("  | ");
         }
+        System.out.println("\n");
+    }
+
+    public int zoraxianEnergyCheck() {
+        int totalEaten = 0;
+        for (int ndx=0; ndx < zoraxTableZoneA.length; ndx++) {
+            if (zoraxTableZoneA[ndx] != null) {
+                if (zoraxTableZoneA[ndx].getEnergyLevel() < 3) {
+                    if (scoraxTableZoneA[ndx] != null) {
+                        // scoraxTableZoneA[ndx].setEnergyLevel(scoraxTableZoneA[ndx].getEnergyLevel() + #);
+                        System.out.println("The Zoraxian in Zone A seat " + (ndx + 1) + " was consumed by the Scoraxian in Zone A seat " + (ndx + 1));
+                        clearSeat(ndx, 'z');
+                        totalEaten++;
+                    }
+                    else {
+                        int ndx2 = ndx + 1;
+                        boolean searchingForNextScoraxian = true;
+                        while (searchingForNextScoraxian) {
+                            if (ndx2 < scoraxTableZoneA.length) {
+                                if (scoraxTableZoneA[ndx2] == null) {
+                                    ndx2++;
+                                }
+                                else
+                                    searchingForNextScoraxian = false;
+                            }
+                            else
+                                searchingForNextScoraxian = false;
+                        }
+                        if (ndx2 == 15)
+                            System.out.println("No Scoraxians are seated to the right to consume the Zoraxian.");
+                        else {
+                            System.out.println("The Zoraxian in Zone A seat " + (ndx + 1) + " was consumed by the Scoraxian in Zone A seat " + (ndx2 + 1));
+                            clearSeat(ndx, 'z');
+                            totalEaten++;
+                        }
+                    }
+                }
+            }
+        }
+        return totalEaten;
     }
 
     // Mutators and Accessors
@@ -151,7 +194,7 @@ public class Restaurant {
     public void setNumScoraxians(int numSco) {
         numScoraxians = numSco;
     }
-    public int getNumAScoraxians() {
+    public int getNumScoraxians() {
         return numScoraxians;
     }
 
