@@ -173,7 +173,8 @@ public class Restaurant {
                             System.out.println("No Scoraxians are seated to the right to consume the Zoraxian.");
                         else {
                             System.out.println("The Zoraxian in Zone A seat " + (ndx + 1) + " was consumed by the Scoraxian in Zone A seat " + (ndx2 + 1));
-                            clearSeat(ndx, 'z');
+                            scoraxTableZoneA[ndx2].setEnergyLevel(scoraxTableZoneA[ndx2].getEnergyLevel() + zoraxTableZoneA[ndx].getEnergyLevel()); // Tranfer the energy level.
+                            clearSeat(ndx, 'z'); // Sanitize the seat for a new patron.
                             totalEaten++;
                         }
                     }

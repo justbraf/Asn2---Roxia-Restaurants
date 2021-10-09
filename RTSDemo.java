@@ -8,28 +8,38 @@ public class RTSDemo {
 
     public static void userStats(Trainee trainMe) {
         System.out.println("\nName: " + trainMe.getTraineeName() + "\nService Points: " + trainMe.getServicePoints());
-        System.out.println("Deaths: " + trainMe.getNumDeaths() + "\nFed: " + trainMe.getNumFed() + "\n");
+        System.out.println("Fed: " + trainMe.getNumFed() + "\nDeaths: " + trainMe.getNumDeaths());
     }
     
     public static void seatDiner(char species, Restaurant theDiner) {
         Scanner inputStream = new Scanner(System.in);
-        System.out.println("Would you like to seat your guest <S> or turn them away <T>?");
+        System.out.print("Would you like to seat your guest <S> or turn them away <T>? ");
         char choice = inputStream.next().charAt(0);
+        while (Character.toLowerCase(choice) != 's' && Character.toLowerCase(choice) != 't') {
+            System.out.print("Invalid Entry!\nWould you like to seat your guest <S> or turn them away <T>? ");
+            choice = inputStream.next().charAt(0);
+        }
         if (Character.toLowerCase(choice) == 's') {
-            System.out.println("What is the name of your guest?");
+            System.out.print("Please enter the name of your guest: ");
             String guestName = inputStream.next();
             System.out.print("Please choose a seat from the " + (species == 's'? "Scoraxian":"Zoraxian") + " Zone A table: ");
             int seatPos = inputStream.nextInt();
+            while (seatPos < 1 || seatPos > 15) {
+                System.out.print("Invalid Entry! Seat numbers 1 to 15 only: ");
+                seatPos = inputStream.nextInt();
+            }
             if (species == 's') {
                 Scoraxian theGuest = new Scoraxian(guestName);
-                if (!theDiner.fillSeat((seatPos - 1), theGuest)) {
-                    System.out.println("That seat is taken");
+                while (!theDiner.fillSeat((seatPos - 1), theGuest)){
+                    System.out.print("That seat is taken. Please try another: ");
+                    seatPos = inputStream.nextInt();
                 }
             }
             else if (species == 'z') {
                 Zoraxian theGuest = new Zoraxian(guestName);
-                if (!theDiner.fillSeat((seatPos - 1), theGuest)) {
-                    System.out.println("That seat is taken");
+                while (!theDiner.fillSeat((seatPos - 1), theGuest)) {
+                    System.out.print("That seat is taken. Please try another: ");
+                    seatPos = inputStream.nextInt();
                 }
             }
             
@@ -47,11 +57,14 @@ public class RTSDemo {
         Restaurant myDiner = new Restaurant();
         String traineeName = inputStream.next();
         Random newDiner = new Random();
+        int curiousAmbroxians = 0;
         Trainee newTrainee = new Trainee(traineeName);
         myDiner.setUpZoneA();
         userStats(newTrainee);
         int zoraEC;
         for (int rounds = 1; rounds < 8; rounds++) {
+            // System.out.print("\033[H\033[2J"); // Clear the console
+            // System.out.flush(); // Empty the buffer
             System.out.println("************** ROUND " + rounds + " ***************");
             myDiner.displayTables();
             // printMenu();
@@ -68,9 +81,61 @@ public class RTSDemo {
                     System.out.println("A Zoraxian is waiting to be seated.");
                     seatDiner('z', myDiner);
                 }
+            }            
+
+            // 10% chance an Ambroxian will wander into Zone A
+            if (newDiner.nextInt(10) == 4) {
+                System.out.println("########### Warning! An Ambroxian has wandered into Zone A ###########");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread is interrupted");
+                }
+                int hungriestScoraEnergy = 9999;
+                int hungriestScoraPos = 9999;
+                int hungriestZoraEnergy = 9999;
+                int hungriestZoraPos = 9999;
+                for (int idx = 0; idx < myDiner.scoraxTableZoneA.length; idx++) {
+                    if (myDiner.scoraxTableZoneA[idx] != null) {
+                        if (myDiner.scoraxTableZoneA[idx].getEnergyLevel() < hungriestScoraEnergy) {
+                            hungriestScoraEnergy = myDiner.scoraxTableZoneA[idx].getEnergyLevel();
+                            hungriestScoraPos = idx;
+                        }
+                    }
+                }
+                for (int idx = 0; idx < myDiner.zoraxTableZoneA.length; idx++) {
+                    if (myDiner.zoraxTableZoneA[idx] != null) {
+                        if (myDiner.zoraxTableZoneA[idx].getEnergyLevel() < hungriestZoraEnergy) {
+                            hungriestZoraEnergy = myDiner.zoraxTableZoneA[idx].getEnergyLevel();
+                            hungriestZoraPos = idx;
+                        }
+                    }
+                }
+                boolean scoraOrZora; //false - Scoraxian eats it; true - Zoraxian eats it;
+                if (hungriestScoraEnergy < hungriestZoraEnergy) {
+                    //Scora eats it
+                    scoraOrZora = false;
+                }
+                else if (hungriestScoraEnergy > hungriestZoraEnergy) {
+                    //Zora eats it
+                    scoraOrZora = true;
+                }
+                else {
+                    // randomly pick one if they have the same energy
+                    scoraOrZora = newDiner.nextBoolean();
+                }
+                if (scoraOrZora) {
+                    myDiner.zoraxTableZoneA[hungriestZoraPos].setEnergyLevel(myDiner.zoraxTableZoneA[hungriestZoraPos].getEnergyLevel() + 2);
+                    System.out.println("Nevermind! A Zoraxian sitting in seat number " + (hungriestZoraPos + 1) + " ate it.");
+                    curiousAmbroxians++;
+                }
+                else {
+                    myDiner.scoraxTableZoneA[hungriestScoraPos].setEnergyLevel(myDiner.scoraxTableZoneA[hungriestScoraPos].getEnergyLevel() + 2);
+                    System.out.println("Nevermind! A Scoraxian sitting in seat number " + (hungriestScoraPos + 1) + " ate it.");
+                    curiousAmbroxians++;
+                }
             }
-            
-            
+
             if (rounds % 2 == 0) { // Deplete hunger every second round
                 for (int sx = 0; sx < myDiner.scoraxTableZoneA.length; sx++) {
                     // Check each seat at the table and deplete hunger by one, if occupied
@@ -84,17 +149,19 @@ public class RTSDemo {
                         myDiner.zoraxTableZoneA[zx].setEnergyLevel(myDiner.zoraxTableZoneA[zx].getEnergyLevel() - 1);
                     }
                 }
-                // try {
-                //     Thread.sleep(2000);
-                // } catch (InterruptedException e) {
-                //     System.out.println("Thread is interrupted");
-                // }
+                
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("Thread is interrupted");
             }
             
         }
-        System.out.println("\n\nFinal");
-        myDiner.displayTables();
+        System.out.println("\n\n########## Summary ##########");
+        // myDiner.displayTables();
         userStats(newTrainee);
+        System.out.println("Curious Ambroxians that met an unfortunate demise: " + curiousAmbroxians);
 
 
         inputStream.close();
