@@ -53,6 +53,7 @@ public class RTSDemo {
 
     public static void main(String[] args) {
         View myView = new View();
+        myView.setupZoneAPanel("Zone A - Seating Area");
         Scanner inputStream = new Scanner(System.in);
         System.out.print("\033[H\033[2J"); // Clear the console
         System.out.flush(); // Empty the buffer
