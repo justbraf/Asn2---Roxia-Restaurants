@@ -3,13 +3,13 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.FontUIResource;
 
 /**
  * View
  */
 public class View extends JFrame implements ActionListener {
-    protected JFrame appFrame;
-    
+    protected JFrame appFrame;    
 
     View() {
         ImageIcon thmb = new ImageIcon("logo.png");
@@ -19,7 +19,7 @@ public class View extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.setIconImage(thmb.getImage());
-        // this.setResizable(false);
+        this.setResizable(false);
         centerFrame(this);
         this.setVisible(true);
     }
@@ -35,7 +35,7 @@ public class View extends JFrame implements ActionListener {
         JPanel zoneAPanel = new JPanel();
         JLabel secLabel = new JLabel(name);
         Border blueBorder = BorderFactory.createLineBorder(Color.BLUE, 3);
-        Border panelBorder = BorderFactory.createTitledBorder(blueBorder, "Zone A - Seating Area", TitledBorder.CENTER, TitledBorder.TOP);
+        Border panelBorder = BorderFactory.createTitledBorder(blueBorder, "Zone A - Seating Area", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.ITALIC, 24));
 
         // zoneAPanel.setBackground(new Color(123,145,228));
         zoneAPanel.setPreferredSize(new Dimension(500, 150));
