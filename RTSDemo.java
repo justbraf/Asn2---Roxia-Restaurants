@@ -68,20 +68,22 @@ public class RTSDemo {
             System.out.println("************** ROUND " + rounds + " ***************");
             myDiner.displayTables();
             // printMenu();
-            zoraEC = myDiner.zoraxianEnergyCheck(); // Check for weak Zoraxians and consume them if any are found
-            newTrainee.setNumDeaths(newTrainee.getNumDeaths() + zoraEC); // Record the number of deaths
-            newTrainee.setServicePoints(newTrainee.getServicePoints() - 3 * zoraEC); // Deduct service points
-            //Seating two new guest
-            for (int guest = 0; guest < 2; guest++) {
-                if (newDiner.nextBoolean()) { //Seat a new Scoraxian diner
-                    System.out.println("A Scoraxian is waiting to be seated.");
-                    seatDiner('s', myDiner);
+            if (rounds > 1) {
+                zoraEC = myDiner.zoraxianEnergyCheck(); // Check for weak Zoraxians and consume them if any are found
+                newTrainee.setNumDeaths(newTrainee.getNumDeaths() + zoraEC); // Record the number of deaths
+                newTrainee.setServicePoints(newTrainee.getServicePoints() - 3 * zoraEC); // Deduct service points
+                //Seating two new guest
+                for (int guest = 0; guest < 2; guest++) {
+                    if (newDiner.nextBoolean()) { //Seat a new Scoraxian diner
+                        System.out.println("A Scoraxian is waiting to be seated.");
+                        seatDiner('s', myDiner);
+                    }
+                    else {
+                        System.out.println("A Zoraxian is waiting to be seated.");
+                        seatDiner('z', myDiner);
+                    }
                 }
-                else {
-                    System.out.println("A Zoraxian is waiting to be seated.");
-                    seatDiner('z', myDiner);
-                }
-            }            
+            }        
 
             // 10% chance an Ambroxian will wander into Zone A
             if (newDiner.nextInt(10) == 4) {
