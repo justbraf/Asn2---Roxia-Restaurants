@@ -54,19 +54,16 @@ public class RTSDemo {
     public static void main(String[] args) {
         // new Splash();
         View myView = new View();
-        // UserForm userForm = new UserForm();
+        
         // System.out.println(userForm.getUserName());
-        myView.setupZoneAPanel("The quick brown fox.");
         // Scanner inputStream = new Scanner(System.in);
-        // System.out.print("\033[H\033[2J"); // Clear the console
-        // System.out.flush(); // Empty the buffer
-        // System.out.println("Welcome to the Roxia Management System.");
-        // Restaurant myDiner = new Restaurant();
-        // String traineeName = inputStream.next();
+        Restaurant myDiner = new Restaurant();
         Random newDiner = new Random();
         // int curiousAmbroxians = 0;
-        // Trainee newTrainee = new Trainee(traineeName);
-        // myDiner.setUpZoneA();
+        Trainee newTrainee = new Trainee("traineeName");
+        UserForm userForm = new UserForm(newTrainee);
+        myDiner.setUpZoneA();
+        myView.setupZoneAPanel(myDiner.scoraxTableZoneA, myDiner.zoraxTableZoneA);
         // userStats(newTrainee);
         // int zoraEC;
         // for (int rounds = 1; rounds < 8; rounds++) {

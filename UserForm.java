@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.plaf.DimensionUIResource;
 /**
  * Splash
  */
@@ -9,8 +8,10 @@ public class UserForm extends JFrame implements ActionListener {
     private String name;
     private JTextField nameTextField;
     private JButton loginButton;
+    private Trainee trainee;
 
-    UserForm() {
+    UserForm(Trainee tn) {
+        trainee = tn;
         ImageIcon thmb = new ImageIcon("logo.png");  // App thumbnail
         JPanel titlePanel = new JPanel();
         JPanel loginPanel = new JPanel();
@@ -20,7 +21,7 @@ public class UserForm extends JFrame implements ActionListener {
         
         this.setLayout(new BorderLayout());
         this.setSize(400, 125);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(thmb.getImage());
         this.setResizable(false);
 
@@ -35,16 +36,19 @@ public class UserForm extends JFrame implements ActionListener {
         loginButton.addActionListener(this);
         loginPanel.add(loginButton);
         this.add(loginPanel, BorderLayout.CENTER);
-        // centerFrame(this);
+        centerFrame(this);
         // this.pack();
+        nameTextField.requestFocusInWindow();
         this.setVisible(true);
-        // this.dispose();
+        this.requestFocus();
     }
 
     public void actionPerformed(ActionEvent e) {
         //event handlers
         if (e.getSource() == loginButton) {
             this.setUserName(nameTextField.getText());
+            trainee.setTraineeName(nameTextField.getText());
+            // this.dispose();
         }
     }
 
