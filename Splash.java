@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 /**
  * Splash
@@ -13,7 +12,6 @@ public class Splash extends JFrame {
         JLabel splashLabel = new JLabel();
         JLabel devLabel = new JLabel("Developed by Jason Griffith & Dwayne Brathwaite");
         
-        this.setLayout(new FlowLayout());
         this.setSize(520, 400);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
@@ -42,27 +40,7 @@ public class Splash extends JFrame {
         }
         this.dispose();
     }
-
-    public void actionPerformed(ActionEvent e) {
-        //event handlers
-        // if (e.getSource() == object) {
-        //     //TODO
-        // }
-    }
-
-    public void setup() {
-        
-        // Border blueBorder = BorderFactory.createLineBorder(Color.BLUE, 3);
-        // Border panelBorder = BorderFactory.createTitledBorder(blueBorder, "Zone A - Seating Area", TitledBorder.CENTER, TitledBorder.TOP);
-
-        // zoneAPanel.setBackground(new Color(123,145,228));
-        // zoneAPanel.setPreferredSize(new Dimension(500, 500));
-        // zoneAPanel.setBorder(blueBorder);
-        // zoneAPanel.setLayout(new GridLayout());
-        // zoneAPanel.setLayout(new BorderLayout());
-        this.setVisible(true);
-    }
-
+    
     private static void centerFrame(JFrame fr) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 

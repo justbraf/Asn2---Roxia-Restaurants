@@ -3,7 +3,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.FontUIResource;
 
 /**
  * View
