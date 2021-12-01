@@ -8,6 +8,10 @@ import javax.swing.border.TitledBorder;
  * View
  */
 public class View extends JFrame implements ActionListener {
+    // updatable elements for Food Waiting section
+    JLabel[] dishLabels;
+    JButton[][] serveReturnButtons;
+    
     // updatable elements for the User Summary
     private JLabel usernameDpl;
     JLabel servicePointsDpl;
@@ -32,6 +36,7 @@ public class View extends JFrame implements ActionListener {
         this.setIconImage(thmb.getImage());
         this.setResizable(false);
         centerFrame(this);
+        this.ZoneAPanel();
         this.CustomerWaitingPanel();
         this.FoodWaitingPanel();
         this.UserSummaryPanel();
@@ -46,7 +51,7 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
-    public void ZoneAPanel(Diner[] sc, Diner[] zo) {
+    public void ZoneAPanel() {
         JPanel zoneAPanel = new JPanel();
         JPanel zoneALeftPanel = new JPanel();
         JPanel zoneARightPanel = new JPanel();
@@ -80,19 +85,18 @@ public class View extends JFrame implements ActionListener {
         // zoneARightPanel.setBackground(new Color(123,145,228));
         
         for (int i = 0; i < scoraSeats.length; i++) {
-            scoraSeats[i] = new JButton(String.valueOf(sc[i]!=null?sc[i].getEnergyLevel():"0"));
+            scoraSeats[i] = new JButton();
             scoraSeats[i].addActionListener(this);
             zoneARightPanel.add(scoraSeats[i]);
         }
         for (int i = 0; i < zoraSeats.length; i++) {
-            zoraSeats[i] = new JButton(String.valueOf(String.valueOf(zo[i]!=null?zo[i].getEnergyLevel():"0")));
+            zoraSeats[i] = new JButton();
             zoraSeats[i].addActionListener(this);
             zoneARightPanel.add(zoraSeats[i]);
         }
         zoneAPanel.add(zoneARightPanel, BorderLayout.CENTER);
 
         this.add(zoneAPanel, BorderLayout.SOUTH);
-        // this.setVisible(true);
     }
 
     public void CustomerWaitingPanel(){
@@ -142,7 +146,6 @@ public class View extends JFrame implements ActionListener {
         cwPanel.add(ambroxBTN);
 
         this.add(cwPanel, BorderLayout.WEST);
-        // this.setVisible(true);
 
     }
 
@@ -210,35 +213,19 @@ public class View extends JFrame implements ActionListener {
         usPanel.add(curiousAmbroxiansDpl);
 
         this.add(usPanel, BorderLayout.EAST);
-        // this.setVisible(true);
 
     }
 
     public void FoodWaitingPanel(){
         //Food waiting panel
         JPanel fwPanel = new JPanel();
+        dishLabels = new JLabel[6];
+        serveReturnButtons = new JButton[6][2];
 
        //Food waiting panel components
        Border fwblueBorder = BorderFactory.createLineBorder(Color.BLUE);
        Border fwpanelBorder = BorderFactory.createTitledBorder(fwblueBorder, "Food Waiting", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.ITALIC, 18));
-       JLabel scordishLbl = new JLabel("Scoron");
-       JLabel zordishLbl = new JLabel("Zoron");
-       JLabel ambroxdishLbl = new JLabel("Ambron");
-       JLabel ran1Lbl = new JLabel("Random"); //randomized food
-       JLabel ran2Lbl = new JLabel("Random");  //randomized food
-       JLabel ran3Lbl = new JLabel("Random");  //randomized food
-       JButton scoronServe = new JButton("Serve");
-       JButton zoronServe = new JButton("Serve");
-       JButton ambronServe = new JButton("Serve");
-       JButton ran1Serve = new JButton("Serve");
-       JButton ran2Serve = new JButton("Serve");
-       JButton ran3Serve = new JButton("Serve");
-       JButton scoronReturned = new JButton("Return");
-       JButton zoronReturned = new JButton("Return");
-       JButton ambronReturned = new JButton("Return");
-       JButton ran1Returned = new JButton("Return");
-       JButton ran2Returned = new JButton("Return");
-       JButton ran3Returned = new JButton("Return");
+       
 
         // Set up Food Waiting Section
         // fwPanel.setPreferredSize(new Dimension(450, 400));
@@ -246,52 +233,39 @@ public class View extends JFrame implements ActionListener {
         fwPanel.setLayout(new GridLayout(6,3));
 
         //Food waiting left column
-        scordishLbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        zordishLbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        ambroxdishLbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        ran1Lbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        ran2Lbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        ran3Lbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        for (int idx = 0; idx < dishLabels.length; idx++) {
+            dishLabels[idx] = new JLabel();
+            dishLabels[idx].setFont(new Font("Arial", Font.PLAIN, 14));
+        }
 
         //Food waiting 2nd column
-        scoronServe.setSize(50, 50);
-        zoronServe.setSize(50, 50);
-        ambronServe.setSize(50, 50);
-        ran1Serve.setSize(50, 50);
-        ran2Serve.setSize(50, 50);
-        ran3Serve.setSize(50, 50);
-
-        //food waiting 3rd column
-        scoronReturned.setSize(50, 50);
-        zoronReturned.setSize(50, 50);
-        ambronReturned.setSize(50, 50);
-        ran1Returned.setSize(50, 50);
-        ran2Returned.setSize(50, 50);
-        ran3Returned.setSize(50, 50);
+        for (int idx = 0; idx < serveReturnButtons.length; idx++) {
+            for (int idx2 = 0; idx2 < serveReturnButtons[idx].length; idx2++) {
+                if (idx2 < 1)
+                    serveReturnButtons[idx][idx2] = new JButton("Serve");
+                else
+                    serveReturnButtons[idx][idx2] = new JButton("Return");
+                serveReturnButtons[idx][idx2].setSize(50, 50);
+            }
+        }
 
         //Adding components to Food waiting
-        fwPanel.add(scordishLbl);
-        fwPanel.add(scoronServe);
-        fwPanel.add(scoronReturned);
-        fwPanel.add(zordishLbl);
-        fwPanel.add(zoronServe);
-        fwPanel.add(zoronReturned);
-        fwPanel.add(ambroxdishLbl);
-        fwPanel.add(ambronServe);
-        fwPanel.add(ambronReturned);
-        fwPanel.add(ran1Lbl);
-        fwPanel.add(ran1Serve);
-        fwPanel.add(ran1Returned);
-        fwPanel.add(ran2Lbl);
-        fwPanel.add(ran2Serve);
-        fwPanel.add(ran2Returned);
-        fwPanel.add(ran3Lbl);
-        fwPanel.add(ran3Serve);
-        fwPanel.add(ran3Returned);
-
+        for (int idx = 0; idx < dishLabels.length; idx++) {
+            fwPanel.add(dishLabels[idx]);
+            fwPanel.add(serveReturnButtons[idx][0]);
+            fwPanel.add(serveReturnButtons[idx][1]);
+        }
         this.add(fwPanel, BorderLayout.CENTER);
-        // this.setVisible(true);
 
+    }
+
+    public void updateZoneAPanel(Diner[] sc, Diner[] zo) {
+        for (int i = 0; i < scoraSeats.length; i++) {
+            scoraSeats[i].setText(String.valueOf(sc[i]!=null?sc[i].getEnergyLevel():"0"));
+        }
+        for (int i = 0; i < zoraSeats.length; i++) {
+            zoraSeats[i].setText(String.valueOf(String.valueOf(zo[i]!=null?zo[i].getEnergyLevel():"0")));
+        }
     }
 
     public void updateUserSummary(Trainee tn) {
@@ -303,6 +277,13 @@ public class View extends JFrame implements ActionListener {
         poorServiceDeathsDpl.setText(String.valueOf(tn.getNumDeaths()));
         curiousAmbroxiansDpl.setText(String.valueOf(tn.getCuriousAmbroxians()));
     }
+    
+    public void updateFoodList(Food[] dish) {
+        for (int idx = 0; idx < dish.length; idx++) {
+            dishLabels[idx].setText(String.valueOf(dish[idx].getDishName() + " (" + dish[idx].getDishEnergy() + ")"));
+        }
+    }
+
     private static void centerFrame(JFrame fr) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 

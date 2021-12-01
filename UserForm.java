@@ -23,7 +23,7 @@ public class UserForm extends JFrame implements ActionListener {
         
         this.setLayout(new BorderLayout());
         this.setSize(400, 125);
-        // this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(thmb.getImage());
         this.setResizable(false);
 

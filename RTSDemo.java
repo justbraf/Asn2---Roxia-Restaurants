@@ -48,15 +48,22 @@ public class RTSDemo {
         Trainee newTrainee = new Trainee("traineeName");
         new UserForm(newTrainee, myView); //pass reference to the UserForm class
         Restaurant myDiner = new Restaurant(); // create Restaurant object
+        Food[] dishes = new Food[6]; // Paceholder for six dishes
+        // Loop through indexes and generate six dishes
+        // indexes 0 to 2 will create Ambron, Scoron & Zoron dishes respectively
+        // indexes 3 to 5 will create one of four random dishes
+        for (int idx = 0; idx < dishes.length; idx++) {
+            dishes[idx] = new Food(idx);
+        }
+        myView.updateFoodList(dishes);
+        myDiner.setUpZoneA();
+        myView.updateZoneAPanel(myDiner.scoraxTableZoneA, myDiner.zoraxTableZoneA);
         Random newDiner = new Random();
         // int numRounds = 0;
-        // int curiousAmbroxians = 0;
         
         
-        myDiner.setUpZoneA();
-        myView.ZoneAPanel(myDiner.scoraxTableZoneA, myDiner.zoraxTableZoneA);
         
-        // userStats(newTrainee);
+    
         // int zoraEC;
         // for (int rounds = 1; rounds < 8; rounds++) {
         //     System.out.println("************** ROUND " + rounds + " ***************");
