@@ -31,6 +31,8 @@ public class View extends JFrame implements ActionListener {
     private Trainee trainee;
     private Food[] dish;
     private int whichDishToServe = 999; // Track the dish that is to be served
+    private int totalDishesServed = 0;
+    private int roundNumber = 0;
     
 
     View(Diner[] sc, Diner[] zo, Trainee tn) {
@@ -50,15 +52,17 @@ public class View extends JFrame implements ActionListener {
         this.CustomerWaitingPanel();
         this.FoodWaitingPanel();
         this.UserSummaryPanel();
+        this.updateZoneAPanel();
+        this.updateFoodList();
         this.setVisible(false);
     }
 
     public void actionPerformed(ActionEvent e) {
-        //event handlers
         // check if a dish was selected to be served
         for (int idx = 0; idx < serveReturnButtons.length; idx++) {
             if (e.getSource() == serveReturnButtons[idx][0]) {
                 whichDishToServe = idx;
+                totalDishesServed++;
             }
         }
         // check if a dish has been returned
@@ -68,7 +72,9 @@ public class View extends JFrame implements ActionListener {
                 serveReturnButtons[idx][0].setEnabled(false);
                 serveReturnButtons[idx][1].setEnabled(false);
                 trainee.incDishesReturned();
-                updateUserSummary();                
+                updateUserSummary();
+                totalDishesServed++;
+                resetRound();
             }
         }
         if (whichDishToServe != 999) {
@@ -81,29 +87,35 @@ public class View extends JFrame implements ActionListener {
                             scorax[btn].FeedMe(dish[whichDishToServe]);
                         }
                         catch (GreedyGutsException errorMsg) {
-                            System.out.println(errorMsg); // Need to convert to popup
+                            scoraSeats[btn].setText(String.valueOf(scorax[btn].getEnergyLevel())); //update button before error message
+                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
                             scorax[btn] = null;
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                             trainee.setNumDeaths(trainee.getNumDeaths() + 1);
                         }
                         catch (AllergyException errorMsg) {
-                            System.out.println(errorMsg); // Need to convert to popup
+                            scoraSeats[btn].setText(String.valueOf(scorax[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
                             scorax[btn] = null;
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                             trainee.setNumDeaths(trainee.getNumDeaths() + 1);
                         }
                         catch (FullyFedException errorMsg) {
-                            System.out.println(errorMsg); // Need to convert to popup
+                            scoraSeats[btn].setText(String.valueOf(scorax[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("There is a " + errorMsg.getMessage() + " " + scorax[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "There is a " + errorMsg.getMessage() + " " + scorax[btn].getSpecies() + " in seat " + (btn + 1), "Good Service", JOptionPane.INFORMATION_MESSAGE);
                             scorax[btn] = null;
                             trainee.setServicePoints(trainee.getServicePoints() + 2);
                             trainee.setNumFed(trainee.getNumFed() + 1);
                         }
-                        scoraSeats[btn].setText(String.valueOf(scorax[btn]!=null?scorax[btn].getEnergyLevel():"0"));
                         serveReturnButtons[whichDishToServe][0].setEnabled(false);
                         serveReturnButtons[whichDishToServe][1].setEnabled(false);
                         trainee.incDishesServed();
                         updateUserSummary(); 
                         whichDishToServe = 999; // Reset dish tracker
+                        resetRound();
                     }
                 }
                 // Check which seated Zoraxian is being served
@@ -114,28 +126,34 @@ public class View extends JFrame implements ActionListener {
                             zorax[btn].FeedMe(dish[whichDishToServe]);
                         }
                         catch (GreedyGutsException errorMsg) {
-                            System.out.println(errorMsg); // Need to convert to popup
+                            zoraSeats[btn].setText(String.valueOf(zorax[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + zorax[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + zorax[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
                             zorax[btn] = null;
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                             trainee.setNumDeaths(trainee.getNumDeaths() + 1);
                         }
                         catch (FullyFedException errorMsg) {
-                            System.out.println(errorMsg); // Need to convert to popup
+                            zoraSeats[btn].setText(String.valueOf(zorax[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("There is a " + errorMsg.getMessage() + " " + zorax[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "There is a " + errorMsg.getMessage() + " " + zorax[btn].getSpecies() + " in seat " + (btn + 1), "Good Service", JOptionPane.INFORMATION_MESSAGE);
                             zorax[btn] = null;
                             trainee.setServicePoints(trainee.getServicePoints() + 2);
                             trainee.setNumFed(trainee.getNumFed() + 1);
                         }
-                        zoraSeats[btn].setText(String.valueOf(zorax[btn]!=null?zorax[btn].getEnergyLevel():"0"));
                         serveReturnButtons[whichDishToServe][0].setEnabled(false);
                         serveReturnButtons[whichDishToServe][1].setEnabled(false);
                         trainee.incDishesServed();
                         updateUserSummary(); 
                         whichDishToServe = 999; // Reset dish tracker
+                        resetRound();
                     }
                 }
+                updateZoneAPanel();
             }
         }
-        
+        // System.out.println(trainee.getIncidentRecords()); //delete this!!!!!*********************************
+        System.out.println("round: "+roundNumber+"\tDish Total: "+totalDishesServed);
     }
 
     public void ZoneAPanel() {
@@ -378,8 +396,34 @@ public class View extends JFrame implements ActionListener {
             dishLabels[idx].setText(String.valueOf(dish[idx].getDishName() + " (" + dish[idx].getDishEnergy() + ")"));
             // renabled buttons
         }
+        // Reset serve and return buttons to enable state
+        for (int idx = 0; idx < serveReturnButtons.length; idx++) {
+            serveReturnButtons[idx][0].setEnabled(true);
+            serveReturnButtons[idx][1].setEnabled(true);
+        }
     }
 
+    private void resetRound() {
+        // Reset for next round if all dishes were used
+        if (totalDishesServed == 6) {
+            totalDishesServed = 0;
+            roundNumber++;
+            JOptionPane.showMessageDialog(null, "Round " + roundNumber + " completed");
+            this.updateFoodList();
+            if (roundNumber > 0) {
+                // updateCustomerWaiting
+                if (roundNumber % 2 == 0) { //Check every even round 2, 4 or 6
+                    for (int idx = 0; idx < scorax.length; idx++) {
+                        if (scorax[idx] != null)
+                            scorax[idx].setEnergyLevel(scorax[idx].getEnergyLevel() - 1);
+                        if (zorax[idx] != null)
+                            zorax[idx].setEnergyLevel(zorax[idx].getEnergyLevel() - 1);
+                    }
+                    updateZoneAPanel();
+                }
+            }
+        }
+    }
     private static void centerFrame(JFrame fr) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 

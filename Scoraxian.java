@@ -16,14 +16,14 @@ public class Scoraxian extends Diner {
     // Manage the energy level of a Scoraxian based on what was eaten
     public void FeedMe (Food dish) throws GreedyGutsException, AllergyException, FullyFedException {
         if (dish.getDishName() == "Zoron")
-            throw new AllergyException("Death by Allergic Reaction");
+            throw new AllergyException("death by allergic reaction");
         else if (dish.getDishName() == "Elixon")
             setEnergyLevel((int)(getEnergyLevel() * 0.75));
         else
             setEnergyLevel(getEnergyLevel() + dish.getDishEnergy());
         if (getEnergyLevel() > 20)
-            throw new GreedyGutsException("Death by Greed");
+            throw new GreedyGutsException("death by greed");
         else if (getEnergyLevel() == 20)
-            throw new FullyFedException("Scoraxian has been fully fed");
+            throw new FullyFedException("fully fed");
     }
 }

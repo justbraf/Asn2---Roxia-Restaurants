@@ -22,8 +22,8 @@ public class Zoraxian extends Diner {
         else
             setEnergyLevel(getEnergyLevel() + dish.getDishEnergy());
         if (getEnergyLevel() > 15)
-            throw new GreedyGutsException("Death by Greed");
+            throw new GreedyGutsException("death by greed");
         else if (getEnergyLevel() == 15)
-            throw new FullyFedException("Zoraxian has been fully fed");
+            throw new FullyFedException("fully fed");
     }
 }

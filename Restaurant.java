@@ -144,16 +144,14 @@ public class Restaurant {
         System.out.println("\n");
     }
 
-    public int zoraxianEnergyCheck() {
-        int totalEaten = 0;
+    public String zoraxianEnergyCheck() {
         for (int ndx=0; ndx < zoraxTableZoneA.length; ndx++) {
             if (zoraxTableZoneA[ndx] != null) {
                 if (zoraxTableZoneA[ndx].getEnergyLevel() < 3) {
                     if (scoraxTableZoneA[ndx] != null) {
-                        // scoraxTableZoneA[ndx].setEnergyLevel(scoraxTableZoneA[ndx].getEnergyLevel() + #);
-                        System.out.println("The Zoraxian in Zone A seat " + (ndx + 1) + " was consumed by the Scoraxian in Zone A seat " + (ndx + 1));
+                        scoraxTableZoneA[ndx].setEnergyLevel(scoraxTableZoneA[ndx].getEnergyLevel() + zoraxTableZoneA[ndx].getEnergyLevel()); // Tranfer the energy level.
                         clearSeat(ndx, 'z');
-                        totalEaten++;
+                        return "The Zoraxian in seat " + (ndx + 1) + " was weak and consumed by the Scoraxian in seat " + (ndx + 1);
                     }
                     else {
                         int ndx2 = ndx + 1;
@@ -164,24 +162,21 @@ public class Restaurant {
                                     ndx2++;
                                 }
                                 else
-                                    searchingForNextScoraxian = false;
+                                    searchingForNextScoraxian = false; // Found the next available Scoraxian
                             }
                             else
-                                searchingForNextScoraxian = false;
+                                searchingForNextScoraxian = false; // No Scoraxians were found
                         }
-                        if (ndx2 == 15)
-                            System.out.println("No Scoraxians are seated to the right to consume the Zoraxian.");
-                        else {
-                            System.out.println("The Zoraxian in Zone A seat " + (ndx + 1) + " was consumed by the Scoraxian in Zone A seat " + (ndx2 + 1));
+                        if (ndx2 < 15) {
                             scoraxTableZoneA[ndx2].setEnergyLevel(scoraxTableZoneA[ndx2].getEnergyLevel() + zoraxTableZoneA[ndx].getEnergyLevel()); // Tranfer the energy level.
                             clearSeat(ndx, 'z'); // Sanitize the seat for a new patron.
-                            totalEaten++;
+                            return "The Zoraxian in seat " + (ndx + 1) + " was weak and consumed by the Scoraxian in seat " + (ndx2 + 1);
                         }
                     }
                 }
             }
         }
-        return totalEaten;
+        return null;
     }
 
     // Mutators and Accessors
