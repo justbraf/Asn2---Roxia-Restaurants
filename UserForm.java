@@ -52,7 +52,7 @@ public class UserForm extends JFrame implements ActionListener {
             trainee.setTraineeName(nameTextField.getText());
             this.dispose();
             mainView.setVisible(true);
-            mainView.updateUserSummary(trainee);
+            mainView.updateUserSummary();
             
         }
     }

@@ -12,4 +12,18 @@ public class Scoraxian extends Diner {
         Random generateEnergy = new Random();
         setEnergyLevel(generateEnergy.nextInt(6) + 5);  // Generate a random energy value between 5 and 10 inclusive
     }
+
+    // Manage the energy level of a Scoraxian based on what was eaten
+    public void FeedMe (Food dish) throws GreedyGutsException, AllergyException, FullyFedException {
+        if (dish.getDishName() == "Zoron")
+            throw new AllergyException("Death by Allergic Reaction");
+        else if (dish.getDishName() == "Elixon")
+            setEnergyLevel((int)(getEnergyLevel() * 0.75));
+        else
+            setEnergyLevel(getEnergyLevel() + dish.getDishEnergy());
+        if (getEnergyLevel() > 20)
+            throw new GreedyGutsException("Death by Greed");
+        else if (getEnergyLevel() == 20)
+            throw new FullyFedException("Scoraxian has been fully fed");
+    }
 }

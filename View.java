@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -23,10 +24,19 @@ public class View extends JFrame implements ActionListener {
 
     // updatabl elements for Zone A
     private JButton[] scoraSeats; // An array of buttons for each of the Scoraxian seats at the table
-    private JButton[] zoraSeats; // An array of buttons for each of the Zoraxian seats at the table   
+    private JButton[] zoraSeats; // An array of buttons for each of the Zoraxian seats at the table
+
+    private Scoraxian[] scorax; //Scoraxian table seats
+    private Zoraxian[] zorax; //Zoraxian table seats
+    private Trainee trainee;
+    private Food[] dish;
+    private int whichDishToServe = 999; // Track the dish that is to be served
     
 
-    View() {
+    View(Diner[] sc, Diner[] zo, Trainee tn) {
+        scorax = (Scoraxian[])sc;
+        zorax = (Zoraxian[])zo;
+        trainee = tn;
         ImageIcon thmb = new ImageIcon("logo.png");
         // this.setLayout(new FlowLayout());
         this.setSize(1100, 450);
@@ -45,10 +55,87 @@ public class View extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         //event handlers
-        //for loop to iterate over the buttons to see which was pressed
-        if (e.getSource() == scoraSeats[0]) {
-            scoraSeats[0].setText(String.valueOf(Integer.valueOf(scoraSeats[0].getText()) + 1));
+        // check if a dish was selected to be served
+        for (int idx = 0; idx < serveReturnButtons.length; idx++) {
+            if (e.getSource() == serveReturnButtons[idx][0]) {
+                whichDishToServe = idx;
+            }
         }
+        // check if a dish has been returned
+        for (int idx = 0; idx < serveReturnButtons.length; idx++) {
+            if (e.getSource() == serveReturnButtons[idx][1]) {
+                dishLabels[idx].setText("<html><strike>" + dishLabels[idx].getText() + "</strike><html>");
+                serveReturnButtons[idx][0].setEnabled(false);
+                serveReturnButtons[idx][1].setEnabled(false);
+                trainee.incDishesReturned();
+                updateUserSummary();                
+            }
+        }
+        if (whichDishToServe != 999) {
+            //Iterate over the table seat buttons to see which was pressed
+            for (int btn = 0; btn < scoraSeats.length; btn++) {
+                // Check which seated Scoraxian is being served
+                if (e.getSource() == scoraSeats[btn]) {
+                    if (scoraSeats[btn].getText() != "0") {
+                        try {
+                            scorax[btn].FeedMe(dish[whichDishToServe]);
+                        }
+                        catch (GreedyGutsException errorMsg) {
+                            System.out.println(errorMsg); // Need to convert to popup
+                            scorax[btn] = null;
+                            trainee.setServicePoints(trainee.getServicePoints() - 3);
+                            trainee.setNumDeaths(trainee.getNumDeaths() + 1);
+                        }
+                        catch (AllergyException errorMsg) {
+                            System.out.println(errorMsg); // Need to convert to popup
+                            scorax[btn] = null;
+                            trainee.setServicePoints(trainee.getServicePoints() - 3);
+                            trainee.setNumDeaths(trainee.getNumDeaths() + 1);
+                        }
+                        catch (FullyFedException errorMsg) {
+                            System.out.println(errorMsg); // Need to convert to popup
+                            scorax[btn] = null;
+                            trainee.setServicePoints(trainee.getServicePoints() + 2);
+                            trainee.setNumFed(trainee.getNumFed() + 1);
+                        }
+                        scoraSeats[btn].setText(String.valueOf(scorax[btn]!=null?scorax[btn].getEnergyLevel():"0"));
+                        serveReturnButtons[whichDishToServe][0].setEnabled(false);
+                        serveReturnButtons[whichDishToServe][1].setEnabled(false);
+                        trainee.incDishesServed();
+                        updateUserSummary(); 
+                        whichDishToServe = 999; // Reset dish tracker
+                    }
+                }
+                // Check which seated Zoraxian is being served
+                if (e.getSource() == zoraSeats[btn]) {
+                    // Prevent empty seat from being served
+                    if (zoraSeats[btn].getText() != "0") {
+                        try {
+                            zorax[btn].FeedMe(dish[whichDishToServe]);
+                        }
+                        catch (GreedyGutsException errorMsg) {
+                            System.out.println(errorMsg); // Need to convert to popup
+                            zorax[btn] = null;
+                            trainee.setServicePoints(trainee.getServicePoints() - 3);
+                            trainee.setNumDeaths(trainee.getNumDeaths() + 1);
+                        }
+                        catch (FullyFedException errorMsg) {
+                            System.out.println(errorMsg); // Need to convert to popup
+                            zorax[btn] = null;
+                            trainee.setServicePoints(trainee.getServicePoints() + 2);
+                            trainee.setNumFed(trainee.getNumFed() + 1);
+                        }
+                        zoraSeats[btn].setText(String.valueOf(zorax[btn]!=null?zorax[btn].getEnergyLevel():"0"));
+                        serveReturnButtons[whichDishToServe][0].setEnabled(false);
+                        serveReturnButtons[whichDishToServe][1].setEnabled(false);
+                        trainee.incDishesServed();
+                        updateUserSummary(); 
+                        whichDishToServe = 999; // Reset dish tracker
+                    }
+                }
+            }
+        }
+        
     }
 
     public void ZoneAPanel() {
@@ -223,7 +310,7 @@ public class View extends JFrame implements ActionListener {
         serveReturnButtons = new JButton[6][2];
 
        //Food waiting panel components
-       Border fwblueBorder = BorderFactory.createLineBorder(Color.BLUE);
+       Border fwblueBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
        Border fwpanelBorder = BorderFactory.createTitledBorder(fwblueBorder, "Food Waiting", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.ITALIC, 18));
        
 
@@ -245,6 +332,7 @@ public class View extends JFrame implements ActionListener {
                     serveReturnButtons[idx][idx2] = new JButton("Serve");
                 else
                     serveReturnButtons[idx][idx2] = new JButton("Return");
+                serveReturnButtons[idx][idx2].addActionListener(this);
                 serveReturnButtons[idx][idx2].setSize(50, 50);
             }
         }
@@ -259,28 +347,36 @@ public class View extends JFrame implements ActionListener {
 
     }
 
-    public void updateZoneAPanel(Diner[] sc, Diner[] zo) {
+    public void updateZoneAPanel() {
         for (int i = 0; i < scoraSeats.length; i++) {
-            scoraSeats[i].setText(String.valueOf(sc[i]!=null?sc[i].getEnergyLevel():"0"));
-        }
+            scoraSeats[i].setText(String.valueOf(scorax[i]!=null?scorax[i].getEnergyLevel():"0"));
+    }
         for (int i = 0; i < zoraSeats.length; i++) {
-            zoraSeats[i].setText(String.valueOf(String.valueOf(zo[i]!=null?zo[i].getEnergyLevel():"0")));
+            zoraSeats[i].setText(String.valueOf(zorax[i]!=null?zorax[i].getEnergyLevel():"0"));
         }
     }
 
-    public void updateUserSummary(Trainee tn) {
-        usernameDpl.setText(tn.getTraineeName());
-        servicePointsDpl.setText(String.valueOf(tn.getServicePoints()));
-        fullyFedDpl.setText(String.valueOf(tn.getNumFed()));
-        dishesServedDpl.setText(String.valueOf(tn.getDishesServed()));
-        dishesReturnedDpl.setText(String.valueOf(tn.getDishesReturned()));
-        poorServiceDeathsDpl.setText(String.valueOf(tn.getNumDeaths()));
-        curiousAmbroxiansDpl.setText(String.valueOf(tn.getCuriousAmbroxians()));
+    public void updateUserSummary() {
+        usernameDpl.setText(trainee.getTraineeName());
+        servicePointsDpl.setText(String.valueOf(trainee.getServicePoints()));
+        fullyFedDpl.setText(String.valueOf(trainee.getNumFed()));
+        dishesServedDpl.setText(String.valueOf(trainee.getDishesServed()));
+        dishesReturnedDpl.setText(String.valueOf(trainee.getDishesReturned()));
+        poorServiceDeathsDpl.setText(String.valueOf(trainee.getNumDeaths()));
+        curiousAmbroxiansDpl.setText(String.valueOf(trainee.getCuriousAmbroxians()));
     }
     
-    public void updateFoodList(Food[] dish) {
+    public void updateFoodList() {
+        dish = new Food[6]; // Paceholder for six dishes
+        // Loop through indexes and generate six dishes
+        // indexes 0 to 2 will create Ambron, Scoron & Zoron dishes respectively
+        // indexes 3 to 5 will create one of four random dishes
+        for (int idx = 0; idx < dish.length; idx++) {
+            dish[idx] = new Food(idx);
+        }
         for (int idx = 0; idx < dish.length; idx++) {
             dishLabels[idx].setText(String.valueOf(dish[idx].getDishName() + " (" + dish[idx].getDishEnergy() + ")"));
+            // renabled buttons
         }
     }
 
