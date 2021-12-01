@@ -39,7 +39,7 @@ public class View extends JFrame implements ActionListener {
     private int whichDishToServe = 999; // Track the dish that is to be served
     private int totalDishesServed = 0;
     private int roundNumber = 0;
-    private Diner[] dinerType;
+    private Diner[] dinerType = new Diner[2];
     private int whoToSeat = 999;
     
 
@@ -69,6 +69,7 @@ public class View extends JFrame implements ActionListener {
         for (int idx = 0; idx < serveReturnButtons.length; idx++) {
             if (e.getSource() == serveReturnButtons[idx][0]) {
                 whichDishToServe = idx;
+                whoToSeat = 999;
             }
         }
         // check if a dish has been returned
@@ -80,6 +81,7 @@ public class View extends JFrame implements ActionListener {
                 trainee.incDishesReturned();
                 updateUserSummary();
                 totalDishesServed++;
+                whoToSeat = 999;
                 resetRound();
             }
         }
@@ -124,6 +126,8 @@ public class View extends JFrame implements ActionListener {
                         whichDishToServe = 999; // Reset dish tracker
                         resetRound();
                     }
+                    else
+                    JOptionPane.showMessageDialog(null, "You cannot serve to an empty seat!", "Poor Service", JOptionPane.ERROR_MESSAGE);
                 }
                 // Check which seated Zoraxian is being served
                 if (e.getSource() == zoraSeats[btn]) {
@@ -157,7 +161,6 @@ public class View extends JFrame implements ActionListener {
                         resetRound();
                     }
                 }
-                updateZoneAPanel();
             }
         }
         if (whoToSeat != 999) {
@@ -171,7 +174,7 @@ public class View extends JFrame implements ActionListener {
                             if (!diner.fillSeat(btn, dinerType[whoToSeat])){ // Check if unable to seat them
                                 // Check if the table is full
                                 if (diner.getNumScoraxians() == 15) {
-                                    JOptionPane.showConfirmDialog(null, "The Scoraxian table is full.", "Service", JOptionPane.WARNING_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "The Scoraxian table is full.", "Poor Service", JOptionPane.WARNING_MESSAGE);
                                 }
                             }
                             else { // Seated successfully
@@ -185,11 +188,11 @@ public class View extends JFrame implements ActionListener {
                             }
                         }
                         else { // Warn about seating the wrong species at the table
-                            JOptionPane.showConfirmDialog(null, "A Zoraxian cannot sit here!", "Service", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "A Zoraxian cannot sit here!", "Poor Service", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                     else { // Warn about seating in an occupied space
-                        JOptionPane.showConfirmDialog(null, "Seat is occupied", "Service", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Seat is occupied", "Poor Service", JOptionPane.WARNING_MESSAGE);
                     }
                 }
                 // Check which Zoraxian button was pressed
@@ -201,7 +204,7 @@ public class View extends JFrame implements ActionListener {
                             if (!diner.fillSeat(btn, dinerType[whoToSeat])){ // Check if unable to seat them
                                 // Check if the table is full
                                 if (diner.getNumZoraxians() == 15) {
-                                    JOptionPane.showConfirmDialog(null, "The Zoraxian table is full.", "Service", JOptionPane.WARNING_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "The Zoraxian table is full.", "Poor Service", JOptionPane.WARNING_MESSAGE);
                                 }
                             }
                             else { // Seated successfully
@@ -215,24 +218,27 @@ public class View extends JFrame implements ActionListener {
                             }
                         }
                         else { // Warn about seating the wrong species at the table
-                            JOptionPane.showConfirmDialog(null, "A Scoraxian cannot sit here!", "Service", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "A Scoraxian cannot sit here!", "Poor Service", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                     else { // Warn about seating in an occupied space
-                        JOptionPane.showConfirmDialog(null, "Seat is occupied", "Service", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Seat is occupied", "Poor Service", JOptionPane.WARNING_MESSAGE);
                     }
                 }
             } //end for loop
         }
+        updateZoneAPanel();
         // System.out.println(trainee.getIncidentRecords()); //delete this!!!!!*********************************
-        System.out.println("round: "+roundNumber+"\tDish Total: "+totalDishesServed);
+        System.out.println("Dish Total: "+totalDishesServed);
         
         if (e.getSource() == seat1CWBtn) {
             whoToSeat = 0;
+            whichDishToServe = 999;
             
         }
         if (e.getSource() == seat2CWBtn) {
             whoToSeat = 1;
+            whichDishToServe = 999;
         }
     }
 
@@ -489,21 +495,37 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
-    public void updateCustomerWaiting() {
-        Random cwType = new Random();
-        dinerType = new Diner[2];
-        for (int idx = 0; idx < dinerType.length; idx++) {
-            if (cwType.nextBoolean() && dinerType[idx] == null) {
-                dinerType[idx] = new Zoraxian("Zora");
-                seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
+    public void updateCustomerWaiting(String status) {
+        if (status == "update") {
+            Random cwType = new Random();
+            for (int idx = 0; idx < dinerType.length; idx++) {
+                if (dinerType[idx] == null) {
+                    if (cwType.nextBoolean()) {
+                        dinerType[idx] = new Zoraxian("Zora");
+                        seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
+                    }
+                    else {
+                        dinerType[idx] = new Scoraxian("Scora");
+                        seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
+                    }
+                }
             }
-            else {
-                dinerType[idx] = new Scoraxian("Scora");
-                seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
-            }
+            seat1CWBtn.setEnabled(true);
+            seat2CWBtn.setEnabled(true);
         }
-        seat1CWBtn.setEnabled(true);
-        seat2CWBtn.setEnabled(true);
+        if (status == "deplete"){
+            for (int idx = 0; idx < dinerType.length; idx++) {
+                dinerType[idx].setEnergyLevel(dinerType[idx].getEnergyLevel() - 1);
+                seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
+                if (dinerType[idx].getEnergyLevel() < 4) {
+                    trainee.setServicePoints(trainee.getServicePoints() - 2);
+                    trainee.setIncidentRecords("A waiting hungry " + dinerType[idx].getSpecies() + " customer has left");
+                    seatCWLbl[idx].setText("Empty Queue");
+                    JOptionPane.showMessageDialog(null, "A waiting hungry " + dinerType[idx].getSpecies() + " customer has left", "Poor Service", JOptionPane.ERROR_MESSAGE);
+                    dinerType[idx] = null;
+                }
+            }       
+        }
     }
 
     private void resetRound() {
@@ -512,6 +534,11 @@ public class View extends JFrame implements ActionListener {
             totalDishesServed = 0;
             roundNumber++;
             JOptionPane.showMessageDialog(null, "Round " + roundNumber + " completed");
+            if (roundNumber == 7) {
+                new WriteToFile(trainee);
+                JOptionPane.showMessageDialog(null, "Thanks for playing.\nYour report has been saved", "Training Over", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
+            }
             this.updateFoodList();
             if (roundNumber > 0) {
                 if (roundNumber % 2 == 0) { //Check every even round 2, 4 or 6
@@ -526,13 +553,14 @@ public class View extends JFrame implements ActionListener {
                     do {
                         val = diner.zoraxianEnergyCheck(); // Returns incidents of weak Zoraxians and their outcome
                         if (val != null && val != "max")
-                            JOptionPane.showConfirmDialog(null, val, "Poor Service", JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(null, val, "Poor Service", JOptionPane.WARNING_MESSAGE);
                             updateZoneAPanel();
                             trainee.setIncidentRecords(val);
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                     } while (val != "max");
-                    updateCustomerWaiting();
+                    updateCustomerWaiting("update");
                 }
+                updateCustomerWaiting("deplete");
             }
         }
     }
