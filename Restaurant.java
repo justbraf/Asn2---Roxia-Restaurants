@@ -145,7 +145,8 @@ public class Restaurant {
     }
 
     public String zoraxianEnergyCheck() {
-        for (int ndx=0; ndx < zoraxTableZoneA.length; ndx++) {
+        int ndx;
+        for (ndx=0; ndx < zoraxTableZoneA.length; ndx++) {
             if (zoraxTableZoneA[ndx] != null) {
                 if (zoraxTableZoneA[ndx].getEnergyLevel() < 3) {
                     if (scoraxTableZoneA[ndx] != null) {
@@ -176,6 +177,8 @@ public class Restaurant {
                 }
             }
         }
+        if (ndx == zoraxTableZoneA.length)
+            return "max";
         return null;
     }
 

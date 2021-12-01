@@ -47,7 +47,7 @@ public class RTSDemo {
         Trainee newTrainee = new Trainee("traineeName"); // create Trainee object with global scope
         Restaurant myDiner = new Restaurant(); // create Restaurant object with global scope
         myDiner.setUpZoneA(); // Generate the eight initial random guest
-        View myView = new View(myDiner.scoraxTableZoneA, myDiner.zoraxTableZoneA, newTrainee); // create View object and pass references to the global objects
+        View myView = new View(myDiner, newTrainee); // create View object and pass references to the global objects
         new UserForm(newTrainee, myView); //pass reference to the UserForm class
         
         Random newDiner = new Random();

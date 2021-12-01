@@ -8,7 +8,7 @@ public class Ambroxian extends Diner {
     // Constructor
     Ambroxian(String name) {
         setName(name);
-        setSpecies("ambroxian");
+        setSpecies("Ambroxian");
         setSpeciesCode('a');
         setEnergyLevel(0);
         setIsBerserk(false);

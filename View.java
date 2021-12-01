@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -22,22 +23,28 @@ public class View extends JFrame implements ActionListener {
     JLabel poorServiceDeathsDpl;
     JLabel curiousAmbroxiansDpl;
 
-    // updatabl elements for Zone A
+    // updatable elements for Zone A
     private JButton[] scoraSeats; // An array of buttons for each of the Scoraxian seats at the table
     private JButton[] zoraSeats; // An array of buttons for each of the Zoraxian seats at the table
 
-    private Scoraxian[] scorax; //Scoraxian table seats
-    private Zoraxian[] zorax; //Zoraxian table seats
+    // updatable elements for Customer Waiting Panel
+    JLabel[] seatCWLbl;
+    JButton seat1CWBtn;
+    JButton seat2CWBtn;
+    JButton ambroxCWBtn;
+
+    private Restaurant diner;
     private Trainee trainee;
     private Food[] dish;
     private int whichDishToServe = 999; // Track the dish that is to be served
     private int totalDishesServed = 0;
     private int roundNumber = 0;
+    private Diner[] dinerType;
+    private int whoToSeat = 999;
     
 
-    View(Diner[] sc, Diner[] zo, Trainee tn) {
-        scorax = (Scoraxian[])sc;
-        zorax = (Zoraxian[])zo;
+    View(Restaurant rest, Trainee tn) {
+        diner = rest;
         trainee = tn;
         ImageIcon thmb = new ImageIcon("logo.png");
         // this.setLayout(new FlowLayout());
@@ -62,7 +69,6 @@ public class View extends JFrame implements ActionListener {
         for (int idx = 0; idx < serveReturnButtons.length; idx++) {
             if (e.getSource() == serveReturnButtons[idx][0]) {
                 whichDishToServe = idx;
-                totalDishesServed++;
             }
         }
         // check if a dish has been returned
@@ -79,41 +85,42 @@ public class View extends JFrame implements ActionListener {
         }
         if (whichDishToServe != 999) {
             //Iterate over the table seat buttons to see which was pressed
-            for (int btn = 0; btn < scoraSeats.length; btn++) {
+            for (int btn = 0; btn < 15; btn++) {
                 // Check which seated Scoraxian is being served
                 if (e.getSource() == scoraSeats[btn]) {
                     if (scoraSeats[btn].getText() != "0") {
+                        totalDishesServed++;
                         try {
-                            scorax[btn].FeedMe(dish[whichDishToServe]);
+                            diner.scoraxTableZoneA[btn].FeedMe(dish[whichDishToServe]);
                         }
                         catch (GreedyGutsException errorMsg) {
-                            scoraSeats[btn].setText(String.valueOf(scorax[btn].getEnergyLevel())); //update button before error message
-                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1));
-                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
-                            scorax[btn] = null;
+                            scoraSeats[btn].setText(String.valueOf(diner.scoraxTableZoneA[btn].getEnergyLevel())); //update button before error message
+                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + diner.scoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + diner.scoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
+                            diner.clearSeat(btn, diner.scoraxTableZoneA[btn].getSpeciesCode());
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                             trainee.setNumDeaths(trainee.getNumDeaths() + 1);
                         }
                         catch (AllergyException errorMsg) {
-                            scoraSeats[btn].setText(String.valueOf(scorax[btn].getEnergyLevel()));
-                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1));
-                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + scorax[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
-                            scorax[btn] = null;
+                            scoraSeats[btn].setText(String.valueOf(diner.scoraxTableZoneA[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + diner.scoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + diner.scoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
+                            diner.clearSeat(btn, diner.scoraxTableZoneA[btn].getSpeciesCode());
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                             trainee.setNumDeaths(trainee.getNumDeaths() + 1);
                         }
                         catch (FullyFedException errorMsg) {
-                            scoraSeats[btn].setText(String.valueOf(scorax[btn].getEnergyLevel()));
-                            trainee.setIncidentRecords("There is a " + errorMsg.getMessage() + " " + scorax[btn].getSpecies() + " in seat " + (btn + 1));
-                            JOptionPane.showMessageDialog(null, "There is a " + errorMsg.getMessage() + " " + scorax[btn].getSpecies() + " in seat " + (btn + 1), "Good Service", JOptionPane.INFORMATION_MESSAGE);
-                            scorax[btn] = null;
+                            scoraSeats[btn].setText(String.valueOf(diner.scoraxTableZoneA[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("There is a " + errorMsg.getMessage() + " " + diner.scoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "There is a " + errorMsg.getMessage() + " " + diner.scoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1), "Good Service", JOptionPane.INFORMATION_MESSAGE);
+                            diner.clearSeat(btn, diner.scoraxTableZoneA[btn].getSpeciesCode());
                             trainee.setServicePoints(trainee.getServicePoints() + 2);
                             trainee.setNumFed(trainee.getNumFed() + 1);
                         }
                         serveReturnButtons[whichDishToServe][0].setEnabled(false);
                         serveReturnButtons[whichDishToServe][1].setEnabled(false);
                         trainee.incDishesServed();
-                        updateUserSummary(); 
+                        updateUserSummary();
                         whichDishToServe = 999; // Reset dish tracker
                         resetRound();
                     }
@@ -122,29 +129,30 @@ public class View extends JFrame implements ActionListener {
                 if (e.getSource() == zoraSeats[btn]) {
                     // Prevent empty seat from being served
                     if (zoraSeats[btn].getText() != "0") {
+                        totalDishesServed++;
                         try {
-                            zorax[btn].FeedMe(dish[whichDishToServe]);
+                            diner.zoraxTableZoneA[btn].FeedMe(dish[whichDishToServe]);
                         }
                         catch (GreedyGutsException errorMsg) {
-                            zoraSeats[btn].setText(String.valueOf(zorax[btn].getEnergyLevel()));
-                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + zorax[btn].getSpecies() + " in seat " + (btn + 1));
-                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + zorax[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
-                            zorax[btn] = null;
+                            zoraSeats[btn].setText(String.valueOf(diner.zoraxTableZoneA[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("A " + errorMsg.getMessage() + " has occured for a " + diner.zoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "A " + errorMsg.getMessage() + " has occured for a " + diner.zoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1), "Poor Service", JOptionPane.WARNING_MESSAGE);
+                            diner.clearSeat(btn, diner.zoraxTableZoneA[btn].getSpeciesCode());
                             trainee.setServicePoints(trainee.getServicePoints() - 3);
                             trainee.setNumDeaths(trainee.getNumDeaths() + 1);
                         }
                         catch (FullyFedException errorMsg) {
-                            zoraSeats[btn].setText(String.valueOf(zorax[btn].getEnergyLevel()));
-                            trainee.setIncidentRecords("There is a " + errorMsg.getMessage() + " " + zorax[btn].getSpecies() + " in seat " + (btn + 1));
-                            JOptionPane.showMessageDialog(null, "There is a " + errorMsg.getMessage() + " " + zorax[btn].getSpecies() + " in seat " + (btn + 1), "Good Service", JOptionPane.INFORMATION_MESSAGE);
-                            zorax[btn] = null;
+                            zoraSeats[btn].setText(String.valueOf(diner.zoraxTableZoneA[btn].getEnergyLevel()));
+                            trainee.setIncidentRecords("There is a " + errorMsg.getMessage() + " " + diner.zoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1));
+                            JOptionPane.showMessageDialog(null, "There is a " + errorMsg.getMessage() + " " + diner.zoraxTableZoneA[btn].getSpecies() + " in seat " + (btn + 1), "Good Service", JOptionPane.INFORMATION_MESSAGE);
+                            diner.clearSeat(btn, diner.zoraxTableZoneA[btn].getSpeciesCode());
                             trainee.setServicePoints(trainee.getServicePoints() + 2);
                             trainee.setNumFed(trainee.getNumFed() + 1);
                         }
                         serveReturnButtons[whichDishToServe][0].setEnabled(false);
                         serveReturnButtons[whichDishToServe][1].setEnabled(false);
                         trainee.incDishesServed();
-                        updateUserSummary(); 
+                        updateUserSummary();
                         whichDishToServe = 999; // Reset dish tracker
                         resetRound();
                     }
@@ -152,8 +160,80 @@ public class View extends JFrame implements ActionListener {
                 updateZoneAPanel();
             }
         }
+        if (whoToSeat != 999) {
+            for (int btn = 0; btn < 15; btn++) {
+                // Check which Scoraxian button was pressed
+                if (e.getSource() == scoraSeats[btn]) {
+                    // Ensure seat is empty
+                    if (scoraSeats[btn].getText() == "0") {
+                        // Check that the diner is a Scoraxian
+                        if (dinerType[whoToSeat].getSpeciesCode() == 's') {
+                            if (!diner.fillSeat(btn, dinerType[whoToSeat])){ // Check if unable to seat them
+                                // Check if the table is full
+                                if (diner.getNumScoraxians() == 15) {
+                                    JOptionPane.showConfirmDialog(null, "The Scoraxian table is full.", "Service", JOptionPane.WARNING_MESSAGE);
+                                }
+                            }
+                            else { // Seated successfully
+                                dinerType[whoToSeat] = null; // Move customer to seat
+                                seatCWLbl[whoToSeat].setText("Empty Queue");
+                                if (whoToSeat == 0)
+                                    seat1CWBtn.setEnabled(false);
+                                else
+                                    seat2CWBtn.setEnabled(false);
+                                whoToSeat = 999;
+                            }
+                        }
+                        else { // Warn about seating the wrong species at the table
+                            JOptionPane.showConfirmDialog(null, "A Zoraxian cannot sit here!", "Service", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    else { // Warn about seating in an occupied space
+                        JOptionPane.showConfirmDialog(null, "Seat is occupied", "Service", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+                // Check which Zoraxian button was pressed
+                if (e.getSource() == zoraSeats[btn]) {
+                    // Ensure seat is empty
+                    if (zoraSeats[btn].getText() == "0") {
+                        // Check that the diner is a Zoraxian
+                        if (dinerType[whoToSeat].getSpeciesCode() == 'z') {
+                            if (!diner.fillSeat(btn, dinerType[whoToSeat])){ // Check if unable to seat them
+                                // Check if the table is full
+                                if (diner.getNumZoraxians() == 15) {
+                                    JOptionPane.showConfirmDialog(null, "The Zoraxian table is full.", "Service", JOptionPane.WARNING_MESSAGE);
+                                }
+                            }
+                            else { // Seated successfully
+                                dinerType[whoToSeat] = null; // Move customer to seat
+                                seatCWLbl[whoToSeat].setText("Empty Queue");
+                                if (whoToSeat == 0)
+                                    seat1CWBtn.setEnabled(false);
+                                else
+                                    seat2CWBtn.setEnabled(false);
+                                whoToSeat = 999;
+                            }
+                        }
+                        else { // Warn about seating the wrong species at the table
+                            JOptionPane.showConfirmDialog(null, "A Scoraxian cannot sit here!", "Service", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    else { // Warn about seating in an occupied space
+                        JOptionPane.showConfirmDialog(null, "Seat is occupied", "Service", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            } //end for loop
+        }
         // System.out.println(trainee.getIncidentRecords()); //delete this!!!!!*********************************
         System.out.println("round: "+roundNumber+"\tDish Total: "+totalDishesServed);
+        
+        if (e.getSource() == seat1CWBtn) {
+            whoToSeat = 0;
+            
+        }
+        if (e.getSource() == seat2CWBtn) {
+            whoToSeat = 1;
+        }
     }
 
     public void ZoneAPanel() {
@@ -210,45 +290,51 @@ public class View extends JFrame implements ActionListener {
         JPanel cwPanel = new JPanel();
 
         //Customer waiting panel componets
-        Border cwblueBorder = BorderFactory.createLineBorder(Color.BLUE);
+        Border cwblueBorder = BorderFactory.createLineBorder(Color.BLUE, 2);
         Border cwpanelBorder = BorderFactory.createTitledBorder(cwblueBorder, "Customer Waiting", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.ITALIC, 18));
-        JLabel scorLbl = new JLabel("Scoraxian");
-        JLabel zorLbl = new JLabel("Zoraxian");
+        seatCWLbl = new JLabel[2];
+        seatCWLbl[0] = new JLabel("Empty Queue");
+        seatCWLbl[1] = new JLabel("Empty Queue");
         JLabel ambroxLbl = new JLabel("Curious Ambroxain?");
-        JButton scoraxSeat = new JButton("Seat");
-        JButton zoraxSeat = new JButton("Seat");
-        JButton ambroxBTN = new JButton("Yes. Click here!");
+        seat1CWBtn = new JButton("Seat");
+        seat1CWBtn.setEnabled(false);
+        seat2CWBtn = new JButton("Seat");
+        seat2CWBtn.setEnabled(false);
+        ambroxCWBtn = new JButton("No");
+        ambroxCWBtn.setEnabled(false);
 
         // Set up Customer Waiting Section
         cwPanel.setPreferredSize(new Dimension(350, 400));
         cwPanel.setBorder(cwpanelBorder);
         cwPanel.setLayout(new GridLayout(3,2));
 
-        scorLbl.setPreferredSize(new Dimension(150, 50));
-        scorLbl.setFont(new Font("Arial", Font.PLAIN, 12));
-        zorLbl.setPreferredSize(new Dimension(150, 50));
-        zorLbl.setFont(new Font("Arial", Font.PLAIN, 12));
+        seatCWLbl[0].setPreferredSize(new Dimension(150, 50));
+        seatCWLbl[0].setFont(new Font("Arial", Font.PLAIN, 12));
+        seatCWLbl[1].setPreferredSize(new Dimension(150, 50));
+        seatCWLbl[1].setFont(new Font("Arial", Font.PLAIN, 12));
         ambroxLbl.setPreferredSize(new Dimension(150, 50));
         ambroxLbl.setFont(new Font("Arial", Font.PLAIN, 12));
 
         //Customer waiting right grid
-        //scoraxSeat.setPreferredSize(new Dimension(100, 30));
-        scoraxSeat.setFont(new Font("Arial", Font.PLAIN, 14));
-        scoraxSeat.setSize(50, 50);
-        zoraxSeat.setPreferredSize(new Dimension(275, 50));
-        zoraxSeat.setFont(new Font("Arial", Font.PLAIN, 14));
-        zoraxSeat.setSize(50, 50);
-        ambroxBTN.setPreferredSize(new Dimension(275, 50));
-        ambroxBTN.setFont(new Font("Arial", Font.PLAIN, 14));
-        ambroxBTN.setSize(50, 50);
+        //seat1CWBtn.setPreferredSize(new Dimension(100, 30));
+        seat1CWBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        seat1CWBtn.setSize(50, 50);
+        seat1CWBtn.addActionListener(this);
+        seat2CWBtn.setPreferredSize(new Dimension(275, 50));
+        seat2CWBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        seat2CWBtn.setSize(50, 50);
+        seat2CWBtn.addActionListener(this);
+        ambroxCWBtn.setPreferredSize(new Dimension(275, 50));
+        ambroxCWBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        ambroxCWBtn.setSize(50, 50);
 
         //Adding components to Customer Waiting panel
-        cwPanel.add(scorLbl);
-        cwPanel.add(scoraxSeat);
-        cwPanel.add(zorLbl);
-        cwPanel.add(zoraxSeat);
+        cwPanel.add(seatCWLbl[0]);
+        cwPanel.add(seat1CWBtn);
+        cwPanel.add(seatCWLbl[1]);
+        cwPanel.add(seat2CWBtn);
         cwPanel.add(ambroxLbl);
-        cwPanel.add(ambroxBTN);
+        cwPanel.add(ambroxCWBtn);
 
         this.add(cwPanel, BorderLayout.WEST);
 
@@ -367,10 +453,10 @@ public class View extends JFrame implements ActionListener {
 
     public void updateZoneAPanel() {
         for (int i = 0; i < scoraSeats.length; i++) {
-            scoraSeats[i].setText(String.valueOf(scorax[i]!=null?scorax[i].getEnergyLevel():"0"));
+            scoraSeats[i].setText(String.valueOf(diner.scoraxTableZoneA[i]!=null?diner.scoraxTableZoneA[i].getEnergyLevel():"0"));
     }
         for (int i = 0; i < zoraSeats.length; i++) {
-            zoraSeats[i].setText(String.valueOf(zorax[i]!=null?zorax[i].getEnergyLevel():"0"));
+            zoraSeats[i].setText(String.valueOf(diner.zoraxTableZoneA[i]!=null?diner.zoraxTableZoneA[i].getEnergyLevel():"0"));
         }
     }
 
@@ -403,6 +489,23 @@ public class View extends JFrame implements ActionListener {
         }
     }
 
+    public void updateCustomerWaiting() {
+        Random cwType = new Random();
+        dinerType = new Diner[2];
+        for (int idx = 0; idx < dinerType.length; idx++) {
+            if (cwType.nextBoolean() && dinerType[idx] == null) {
+                dinerType[idx] = new Zoraxian("Zora");
+                seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
+            }
+            else {
+                dinerType[idx] = new Scoraxian("Scora");
+                seatCWLbl[idx].setText(String.valueOf((dinerType[idx].getSpecies() + " (" + dinerType[idx].getEnergyLevel() +")")));
+            }
+        }
+        seat1CWBtn.setEnabled(true);
+        seat2CWBtn.setEnabled(true);
+    }
+
     private void resetRound() {
         // Reset for next round if all dishes were used
         if (totalDishesServed == 6) {
@@ -411,19 +514,29 @@ public class View extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Round " + roundNumber + " completed");
             this.updateFoodList();
             if (roundNumber > 0) {
-                // updateCustomerWaiting
                 if (roundNumber % 2 == 0) { //Check every even round 2, 4 or 6
-                    for (int idx = 0; idx < scorax.length; idx++) {
-                        if (scorax[idx] != null)
-                            scorax[idx].setEnergyLevel(scorax[idx].getEnergyLevel() - 1);
-                        if (zorax[idx] != null)
-                            zorax[idx].setEnergyLevel(zorax[idx].getEnergyLevel() - 1);
+                    for (int idx = 0; idx < diner.scoraxTableZoneA.length; idx++) {
+                        if (diner.scoraxTableZoneA[idx] != null)
+                            diner.scoraxTableZoneA[idx].setEnergyLevel(diner.scoraxTableZoneA[idx].getEnergyLevel() - 1);
+                        if (diner.zoraxTableZoneA[idx] != null)
+                            diner.zoraxTableZoneA[idx].setEnergyLevel(diner.zoraxTableZoneA[idx].getEnergyLevel() - 1);
                     }
                     updateZoneAPanel();
+                    String val = null;
+                    do {
+                        val = diner.zoraxianEnergyCheck(); // Returns incidents of weak Zoraxians and their outcome
+                        if (val != null && val != "max")
+                            JOptionPane.showConfirmDialog(null, val, "Poor Service", JOptionPane.WARNING_MESSAGE);
+                            updateZoneAPanel();
+                            trainee.setIncidentRecords(val);
+                            trainee.setServicePoints(trainee.getServicePoints() - 3);
+                    } while (val != "max");
+                    updateCustomerWaiting();
                 }
             }
         }
     }
+    
     private static void centerFrame(JFrame fr) {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
