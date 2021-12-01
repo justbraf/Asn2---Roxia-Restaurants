@@ -5,17 +5,19 @@ import javax.swing.*;
  * Splash
  */
 public class UserForm extends JFrame implements ActionListener {
-    private String name;
+    // private String name;
     private JTextField nameTextField;
     private JButton loginButton;
-    private Trainee trainee;
+    private Trainee trainee; // class scope variable for referencing trainee object
+    private View mainView;
 
-    UserForm(Trainee tn) {
-        trainee = tn;
+    UserForm(Trainee tn, View vw) {
+        trainee = tn; // pass local reference from constructor to variable with class scope
+        mainView = vw;
         ImageIcon thmb = new ImageIcon("logo.png");  // App thumbnail
         JPanel titlePanel = new JPanel();
         JPanel loginPanel = new JPanel();
-        JLabel nameLabel = new JLabel("Name");
+        JLabel nameLabel = new JLabel();
         nameTextField = new JTextField();
         loginButton = new JButton("Login");
         
@@ -38,17 +40,20 @@ public class UserForm extends JFrame implements ActionListener {
         this.add(loginPanel, BorderLayout.CENTER);
         centerFrame(this);
         // this.pack();
-        nameTextField.requestFocusInWindow();
+        // nameTextField.requestFocusInWindow();
         this.setVisible(true);
-        this.requestFocus();
+        // this.requestFocus();
     }
 
     public void actionPerformed(ActionEvent e) {
         //event handlers
         if (e.getSource() == loginButton) {
-            this.setUserName(nameTextField.getText());
+            // this.setUserName(nameTextField.getText());
             trainee.setTraineeName(nameTextField.getText());
-            // this.dispose();
+            this.dispose();
+            mainView.setVisible(true);
+            mainView.updateUserSummary(trainee);
+            
         }
     }
 
@@ -63,10 +68,10 @@ public class UserForm extends JFrame implements ActionListener {
         fr.setLocation(x, y);
     }
     
-    public String getUserName() {
-        return name;
-    }
-    public void setUserName(String nam) {
-        name = nam;
-    }
+    // public String getUserName() {
+    //     return name;
+    // }
+    // public void setUserName(String nam) {
+    //     name = nam;
+    // }
 }

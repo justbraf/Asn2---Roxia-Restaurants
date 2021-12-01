@@ -1,15 +1,6 @@
 import java.util.Scanner;
 import java.util.Random;
 public class RTSDemo {
-    // Display a user menu.
-    public static void printMenu() {
-        System.out.println("Please Select an option from the menu:\nF - Fill a seat\nC - Clear a seat\nD - Display tables\nE - Exit Demo");
-    }
-
-    public static void userStats(Trainee trainMe) {
-        System.out.println("\nName: " + trainMe.getTraineeName() + "\nService Points: " + trainMe.getServicePoints());
-        System.out.println("Fed: " + trainMe.getNumFed() + "\nDeaths: " + trainMe.getNumDeaths());
-    }
     
     public static void seatDiner(char species, Restaurant theDiner) {
         Scanner inputStream = new Scanner(System.in);
@@ -52,18 +43,19 @@ public class RTSDemo {
     }
 
     public static void main(String[] args) {
-        // new Splash();
-        View myView = new View();
-        
-        // System.out.println(userForm.getUserName());
-        // Scanner inputStream = new Scanner(System.in);
-        Restaurant myDiner = new Restaurant();
-        Random newDiner = new Random();
-        // int curiousAmbroxians = 0;
+        // new Splash(); // Splash loading screen
+        View myView = new View(); // create View object
         Trainee newTrainee = new Trainee("traineeName");
-        UserForm userForm = new UserForm(newTrainee);
+        new UserForm(newTrainee, myView); //pass reference to the UserForm class
+        Restaurant myDiner = new Restaurant(); // create Restaurant object
+        Random newDiner = new Random();
+        // int numRounds = 0;
+        // int curiousAmbroxians = 0;
+        
+        
         myDiner.setUpZoneA();
-        myView.setupZoneAPanel(myDiner.scoraxTableZoneA, myDiner.zoraxTableZoneA);
+        myView.ZoneAPanel(myDiner.scoraxTableZoneA, myDiner.zoraxTableZoneA);
+        
         // userStats(newTrainee);
         // int zoraEC;
         // for (int rounds = 1; rounds < 8; rounds++) {
@@ -155,11 +147,12 @@ public class RTSDemo {
         //         }
                 
         //     }
-        //     try {
-        //         Thread.sleep(2000);
-        //     } catch (InterruptedException e) {
-        //         System.out.println("Thread is interrupted");
-        //     }
+            // try {
+            //     Thread.sleep(10000);
+            // } catch (InterruptedException e) {
+            //     System.out.println("Thread is interrupted");
+            // }
+            // myView.updateUserSummary(newTrainee);
         //     System.out.print("\033[H\033[2J"); // Clear the console
         //     System.out.flush(); // Empty the buffer
             
